@@ -29,10 +29,10 @@ class Servo:
       else:
           self.pwm.disable()
   def dir(self, percentage):
-      if percentage > 1000:
-          percentage = 1000
-      elif percentage < 0:
-          percentage = 0
+      if percentage > 750:
+          percentage = 750
+      elif percentage < 250:
+          percentage = 250
       self.pwm.duty(percentage/1000*self.duty_range+self.duty_min)
   def drive(self, inc):
       self.value += inc
@@ -279,9 +279,15 @@ AUTH_TIMER = utime.ticks_ms()
 AUTH_COUNTER = 0
 AUTH_N_ACCEPTANCE = 5
 currentDir=init_pitch
-C_PID_P=0.75
+
+#C_PID_P=0.75
+#C_PID_I=0.00015
+#C_PID_D=0.5
+
+C_PID_P=0.45
 C_PID_I=0.00015
-C_PID_D=0.5
+C_PID_D=0.25
+
 PID_ERROR=0
 TOTAL_ERROR=0
 PAST_ERROR=0
@@ -297,7 +303,7 @@ BACK_POS=True
 REMOTE_CTRL_WIFI=[False,False,False]
 FACE_AUTHED=False
 ATTENDANCE_COUNTER=utime.ticks_ms()
-ATTENDANCE_TIMEOUT=1*60*1000
+ATTENDANCE_TIMEOUT=2*60*1000
 ATTENDANCE_STATUS=False
 CONTINUOUS_FALSE_COUNTER=100
 fps=0.0
@@ -381,10 +387,10 @@ while (1):
               FACE_CENTERED=False
       PAST_ERROR=PID_ERROR
       TOTAL_ERROR+=PID_ERROR
-      if currentDir>1000:
-          currentDir=1000
-      elif currentDir<0:
-          currentDir=0
+      if currentDir>750:
+          currentDir=750
+      elif currentDir<250:
+          currentDir=250
       pitch.dir(currentDir)
   if (utime.ticks_diff(utime.ticks_ms(),COUNTER_RETURN_POS)>TIMEOUT_RETURN_POS) and BACK_POS==False:
       STATUS_BANNER="Resetting Position"
@@ -510,6 +516,8 @@ while (1):
                           AUTH_COUNTER=0
                           FACE_AUTHED=True
                           SECONDS_TICKER=utime.ticks_ms()
+                          JUST_AUTHED=True
+                          JUST_AUTHED_TIMER=utime.ticks_ms()
                           if ATTENDANCE_STATUS==False:
                               ATTENDANCE_STATUS=True
                               REMOTE_CTRL_WIFI[0]= True
